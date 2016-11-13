@@ -1,2 +1,3 @@
-script: "sbt clean coverage test"
-after_success: "sbt coverageReport coveralls"
+language: scala
+script: sbt clean coverage test
+after_success: sbt coverageReport coveralls
