@@ -1,6 +1,6 @@
 package org.hammerlab.spark.test.suite
 
-import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.{Kryo, Serializer}
 import org.apache.spark.serializer.KryoRegistrator
 
 import scala.collection.mutable.ArrayBuffer
@@ -24,18 +24,24 @@ class KryoSerializerSuite[T <: KryoRegistrator](registrar: Class[T] = null,
   // RegisterClass represented as a Class[_].
   implicit class ClassToRegister(val clazz: Class[_]) extends RegisterClass
 
-  private val extraKryoRegistrations = ArrayBuffer[Class[_]]()
+  private val extraKryoRegistrations = ArrayBuffer[(Class[_], Option[Serializer[_]])]()
+
+  def kryoRegister[T](cls: Class[T], serializer: Serializer[T]): Unit =
+    extraKryoRegistrations += cls -> Some(serializer)
 
   // Subclasses can record extra Kryo classes to register here.
   def kryoRegister(classes: RegisterClass*): Unit =
-    extraKryoRegistrations ++= classes.map(_.clazz)
+    extraKryoRegistrations ++= classes.map(_.clazz -> None)
 
   override def registerClasses(kryo: Kryo): Unit = {
     Option(registrar).foreach(_.newInstance().registerClasses(kryo))
     for {
-      clazz <- extraKryoRegistrations
+      (clazz, serializerOpt) <- extraKryoRegistrations
     } {
-      kryo.register(clazz)
+      serializerOpt match {
+        case Some(serializer) => kryo.register(clazz, serializer)
+        case None => kryo.register(clazz)
+      }
     }
   }
 

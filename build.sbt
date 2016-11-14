@@ -1,6 +1,6 @@
 name := "spark-tests"
 
-version := "1.1.0-SNAPSHOT"
+version := "1.1.1"
 
 libraryDependencies <++= libraries { v => Seq(
   v('spark),
