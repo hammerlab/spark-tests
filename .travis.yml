@@ -1,3 +1,10 @@
 language: scala
 script: sbt clean coverage test
+
+cache:
+  directories:
+  - $HOME/.ivy2/cache
+  - $HOME/.sbt/boot/
+  - $HOME/.zinc
+
 after_success: sbt coverageReport coveralls
