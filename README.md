@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hammerlab/spark-tests.svg?branch=master)](https://travis-ci.org/hammerlab/spark-tests)
 [![Coverage Status](https://coveralls.io/repos/github/hammerlab/spark-tests/badge.svg)](https://coveralls.io/github/hammerlab/spark-tests)
-[![Maven Central](https://img.shields.io/maven-central/v/org.hammerlab/spark-tests.svg?maxAge=25920)](http://search.maven.org/#search%7Cga%7C1%7Cspark-tests)
+[![Maven Central](https://img.shields.io/maven-central/v/org.hammerlab/spark-tests_2.11.svg?maxAge=25920)](http://search.maven.org/#search%7Cga%7C1%7Cspark-tests)
 
 Utilities for writing tests that use Apache Spark.
 
