@@ -1,10 +1,11 @@
 name := "spark-tests"
 
-version := "1.1.1"
+version := "1.1.2"
 
-libraryDependencies <++= libraries { v => Seq(
-  v('spark),
-  v('spark_testing_base),
-  v('scalatest),
-  "org.hammerlab" %% "spark-util" % "1.0.0"
-)}
+providedDeps += libraries.value('spark)
+
+libraryDependencies ++= Seq(
+  libraries.value('spark_testing_base),
+  "org.hammerlab" %% "spark-util" % "1.1.1",
+  libraries.value('scalatest)
+)
