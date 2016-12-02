@@ -1,6 +1,6 @@
-package org.hammerlab.spark.test
+package org.hammerlab.test
 
-import org.scalatest.matchers.{MatchResult, Matcher}
+import org.scalatest.matchers.{ MatchResult, Matcher }
 
 import scala.collection.SortedMap
 import scala.collection.mutable.ArrayBuffer

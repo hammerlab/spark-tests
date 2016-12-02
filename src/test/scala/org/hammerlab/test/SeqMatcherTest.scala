@@ -1,6 +1,6 @@
-package org.hammerlab.spark.test
+package org.hammerlab.test
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{ FunSuite, Matchers }
 
 class SeqMatcherTest extends FunSuite with Matchers {
 

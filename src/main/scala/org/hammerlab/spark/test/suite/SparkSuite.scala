@@ -1,8 +1,8 @@
 package org.hammerlab.spark.test.suite
 
 import com.holdenkarau.spark.testing.SharedSparkContext
-import org.hammerlab.spark.test.TmpFiles
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.hammerlab.test.files.TmpFiles
+import org.scalatest.{ BeforeAndAfterAll, FunSuite, Matchers }
 
 trait SparkSuite
   extends FunSuite
