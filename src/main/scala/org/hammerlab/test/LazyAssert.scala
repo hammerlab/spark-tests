@@ -1,4 +1,4 @@
-package org.hammerlab.spark.test
+package org.hammerlab.test
 
 import org.scalatest.Assertions
 

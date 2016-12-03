@@ -1,10 +1,10 @@
-package org.hammerlab.spark.test
+package org.hammerlab.test.files
 
 import java.io.File
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 
 import org.apache.commons.io.FileUtils
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.scalatest.{ BeforeAndAfterAll, Suite }
 
 import scala.collection.mutable.ArrayBuffer
 
