@@ -1,6 +1,6 @@
 name := "spark-tests"
 
-version := "1.2.0"
+version := "1.2.1"
 
 providedDeps += libraries.value('spark)
 
