@@ -1,8 +1,7 @@
 package org.hammerlab.spark.test.suite
 
-import org.scalatest.{FunSuite, Matchers}
+import org.hammerlab.test.Suite
 
 trait PerCaseSuite
-  extends FunSuite
-    with Matchers
+  extends Suite
     with PerCaseSparkContext

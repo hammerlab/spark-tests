@@ -13,25 +13,29 @@ class KryoSerializerSuite[T <: KryoRegistrator](registrar: Class[T] = null,
 
   // Glorified union type for String ∨ Class[_].
   trait RegisterClass {
-    def clazz: Class[_]
+    def cls: Class[_]
   }
 
   // RegisterClass represented as a String.
   implicit class ClassNameToRegister(className: String) extends RegisterClass {
-    override def clazz: Class[_] = Class.forName(className)
+    override def cls: Class[_] = Class.forName(className)
   }
 
   // RegisterClass represented as a Class[_].
-  implicit class ClassToRegister(val clazz: Class[_]) extends RegisterClass
+  implicit class ClassToRegister(val cls: Class[_]) extends RegisterClass
+
+  class ClassWithSerializer[U](val cls: Class[U], val serializer: Serializer[U]) extends RegisterClass
+  implicit def makeClassWithSerializer[U](t: (Class[U], Serializer[U])): ClassWithSerializer[U] =
+    new ClassWithSerializer(t._1, t._2)
 
   private val extraKryoRegistrations = ArrayBuffer[(Class[_], Option[Serializer[_]])]()
 
-  def kryoRegister[T](cls: Class[T], serializer: Serializer[T]): Unit =
+  def kryoRegister[U](cls: Class[U], serializer: Serializer[U]): Unit =
     extraKryoRegistrations += cls -> Some(serializer)
 
   // Subclasses can record extra Kryo classes to register here.
   def kryoRegister(classes: RegisterClass*): Unit =
-    extraKryoRegistrations ++= classes.map(_.clazz -> None)
+    extraKryoRegistrations ++= classes.map(_.cls -> None)
 
   override def registerClasses(kryo: Kryo): Unit = {
     Option(registrar).foreach(_.newInstance().registerClasses(kryo))
