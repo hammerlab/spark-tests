@@ -1,16 +1,17 @@
 package org.hammerlab.spark.test.suite
 
 import com.holdenkarau.spark.testing.SharedSparkContext
+import org.hammerlab.test.Suite
 import org.hammerlab.test.files.TmpFiles
-import org.scalatest.{ BeforeAndAfterAll, FunSuite, Matchers }
+import org.scalatest.BeforeAndAfterAll
 
 trait SparkSuite
-  extends FunSuite
-    with Matchers
+  extends Suite
     with SharedSparkContext
     with BeforeAndAfterAll
     with TmpFiles {
 
+  // Expose the SparkContext as an implicit.
   implicit lazy val sparkContext = sc
 
   // Set this explicitly so that we get deterministic behavior across test-machines with varying numbers of cores.

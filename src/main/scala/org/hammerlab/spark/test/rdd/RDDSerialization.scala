@@ -1,6 +1,6 @@
 package org.hammerlab.spark.test.rdd
 
-import java.io.{File, FilenameFilter}
+import java.io.{ File, FilenameFilter }
 
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.filefilter.PrefixFileFilter
@@ -12,8 +12,7 @@ import scala.reflect.ClassTag
 /**
  * Base-trait for tests that check round-trip correctness and on-disk sizes for a given RDD-serde implementation.
  */
-trait VerifyRDDSerde
-  extends SparkSuite {
+trait RDDSerialization extends SparkSuite {
 
   // Subclasses implement serializing and deserializing an RDD.
   protected def serializeRDD[T: ClassTag](rdd: RDD[T], path: String): RDD[T]
