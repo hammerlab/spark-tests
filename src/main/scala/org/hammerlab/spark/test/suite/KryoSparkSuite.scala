@@ -5,9 +5,9 @@ import org.apache.spark.serializer.KryoRegistrator
 
 import scala.collection.mutable.ArrayBuffer
 
-class KryoSerializerSuite[T <: KryoRegistrator](registrar: Class[T] = null,
-                                                registrationRequired: Boolean = true,
-                                                referenceTracking: Boolean = false)
+class KryoSparkSuite[T <: KryoRegistrator](registrar: Class[T] = null,
+                                           registrationRequired: Boolean = true,
+                                           referenceTracking: Boolean = false)
   extends SparkSuite
     with KryoRegistrator {
 
