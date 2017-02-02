@@ -1,57 +1,96 @@
 package org.hammerlab.spark.test.suite
 
-import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.esotericsoftware.kryo.{ Kryo, Serializer }
 import org.apache.spark.serializer.KryoRegistrator
 
 import scala.collection.mutable.ArrayBuffer
 
+/**
+ * Base for test-suites that rely on Kryo serialization, including registering classes for serialization in a
+ * test-suite-scoped manner.
+ *
+ * The [[register]] method allows for tests to register custom classes (and/or additional "registrators" that themselves
+ * register classes) that may be serialized in the course of testing, but which generally needn't be registered for
+ * production usage.
+ */
 class KryoSparkSuite[T <: KryoRegistrator](registrar: Class[T] = null,
                                            registrationRequired: Boolean = true,
                                            referenceTracking: Boolean = false)
   extends SparkSuite
     with KryoRegistrator {
 
-  // Glorified union type for String ∨ Class[_].
-  trait RegisterClass {
-    def cls: Class[_]
+  /**
+   * Base for (usually implicitly-created) kryo-registrations that subclasses can add.
+   */
+  sealed trait Registration {
+    def register(implicit kryo: Kryo): Unit
   }
 
-  // RegisterClass represented as a String.
-  implicit class ClassNameToRegister(className: String) extends RegisterClass {
-    override def cls: Class[_] = Class.forName(className)
+  /**
+   * Record a sequence of [[Registration]]s for later registration with Kryo, during [[org.apache.spark.SparkEnv]]
+   * initialization.
+   */
+  def register(registrations: Registration*): Unit =
+    extraKryoRegistrations ++= registrations
+
+  /**
+   * Simple registration: just a [[Class]].
+   */
+  implicit class ClassToRegister(cls: Class[_]) extends Registration {
+    override def register(implicit kryo: Kryo): Unit = kryo.register(cls)
   }
 
-  // RegisterClass represented as a Class[_].
-  implicit class ClassToRegister(val cls: Class[_]) extends RegisterClass
+  /**
+   * Register a class by (fully-qualified) name.
+   */
+  implicit class ClassNameToRegister(className: String) extends Registration {
+    override def register(implicit kryo: Kryo): Unit = kryo.register(Class.forName(className))
+  }
 
-  class ClassWithSerializer[U](val cls: Class[U], val serializer: Serializer[U]) extends RegisterClass
-  implicit def makeClassWithSerializer[U](t: (Class[U], Serializer[U])): ClassWithSerializer[U] =
-    new ClassWithSerializer(t._1, t._2)
+  /**
+   * Register a class, along with a custom serializer.
+   */
+  case class ClassWithSerializerToRegister[U](cls: Class[U], serializer: Serializer[U]) extends Registration {
+    override def register(implicit kryo: Kryo): Unit = kryo.register(cls, serializer)
+  }
 
-  private val extraKryoRegistrations = ArrayBuffer[(Class[_], Option[Serializer[_]])]()
+  /**
+   * Register an additional [[KryoRegistrator]].
+   */
+  implicit class RegistratorToRegister(registrator: KryoRegistrator) extends Registration {
+    override def register(implicit kryo: Kryo): Unit = registrator.registerClasses(kryo)
+  }
 
-  def kryoRegister[U](cls: Class[U], serializer: Serializer[U]): Unit =
-    extraKryoRegistrations += cls -> Some(serializer)
+  /**
+   * Convenience function, supports syntax like:
+   *
+   *   register(classOf[Foo] → new FooSerializer)
+   */
+  implicit def makeRegistration[U](t: (Class[U], Serializer[U])): ClassWithSerializerToRegister[U] =
+    ClassWithSerializerToRegister(t._1, t._2)
 
-  // Subclasses can record extra Kryo classes to register here.
-  def kryoRegister(classes: RegisterClass*): Unit =
-    extraKryoRegistrations ++= classes.map(_.cls -> None)
+  /**
+   * Additional registrations are queued here during instance initialization, and actually registered during
+   * [[registerClasses]] (called by Spark during [[org.apache.spark.SparkEnv]] initialization.
+   */
+  private val extraKryoRegistrations = ArrayBuffer[Registration]()
 
+  /**
+   * Spark's hook for registering classes with Kryo.
+   */
   override def registerClasses(kryo: Kryo): Unit = {
-    Option(registrar).foreach(_.newInstance().registerClasses(kryo))
     for {
-      (clazz, serializerOpt) <- extraKryoRegistrations
+      registration <- extraKryoRegistrations.reverseIterator
     } {
-      serializerOpt match {
-        case Some(serializer) => kryo.register(clazz, serializer)
-        case None => kryo.register(clazz)
-      }
+      registration.register(kryo)
     }
+    Option(registrar).foreach(_.newInstance().registerClasses(kryo))
   }
 
   conf
-    .set("spark.kryo.referenceTracking", referenceTracking.toString)
-    .set("spark.kryo.registrationRequired", registrationRequired.toString)
+    // Register this class as its own KryoRegistrator!
     .set("spark.kryo.registrator", getClass.getCanonicalName)
     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .set("spark.kryo.referenceTracking", referenceTracking.toString)
+    .set("spark.kryo.registrationRequired", registrationRequired.toString)
 }

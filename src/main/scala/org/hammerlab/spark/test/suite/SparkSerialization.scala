@@ -5,6 +5,9 @@ import java.nio.ByteBuffer
 import com.holdenkarau.spark.testing.SharedSparkContext
 import org.apache.spark.SparkEnv
 
+/**
+ * Mix-in that exposes a Spark [[org.apache.spark.serializer.Serializer]] instance.
+ */
 trait SparkSerialization {
   self: SharedSparkContext =>
 
