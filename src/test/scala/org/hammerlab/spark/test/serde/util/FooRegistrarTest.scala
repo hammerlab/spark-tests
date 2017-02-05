@@ -10,5 +10,5 @@ class FooRegistrarTest
     registrationRequired = false,
     referenceTracking = true
   ) {
-  kryoRegister(classOf[Foo])
+  register(classOf[Foo])
 }
