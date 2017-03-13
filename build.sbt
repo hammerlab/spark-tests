@@ -1,6 +1,6 @@
 name := "spark-tests"
 
-version := "1.3.2"
+version := "1.3.3"
 
 libraryDependencies ++= Seq(
   libs.value('scalatest),

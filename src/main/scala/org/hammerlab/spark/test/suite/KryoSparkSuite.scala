@@ -79,12 +79,12 @@ class KryoSparkSuite[T <: KryoRegistrator](registrar: Class[T] = null,
    * Spark's hook for registering classes with Kryo.
    */
   override def registerClasses(kryo: Kryo): Unit = {
+    Option(registrar).foreach(_.newInstance().registerClasses(kryo))
     for {
       registration <- extraKryoRegistrations.reverseIterator
     } {
       registration.register(kryo)
     }
-    Option(registrar).foreach(_.newInstance().registerClasses(kryo))
   }
 
   conf
