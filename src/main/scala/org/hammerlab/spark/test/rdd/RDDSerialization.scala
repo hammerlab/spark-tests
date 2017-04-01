@@ -1,10 +1,10 @@
 package org.hammerlab.spark.test.rdd
 
-import java.io.{ File, FilenameFilter }
+import java.io.FilenameFilter
 
-import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.filefilter.PrefixFileFilter
 import org.apache.spark.rdd.RDD
+import org.hammerlab.paths.Path
 import org.hammerlab.spark.test.suite.SparkSuite
 
 import scala.reflect.ClassTag
@@ -12,11 +12,12 @@ import scala.reflect.ClassTag
 /**
  * Base-trait for tests that check round-trip correctness and on-disk sizes for a given RDD-serde implementation.
  */
-trait RDDSerialization extends SparkSuite {
+trait RDDSerialization
+  extends SparkSuite {
 
   // Subclasses implement serializing and deserializing an RDD.
-  protected def serializeRDD[T: ClassTag](rdd: RDD[T], path: String): RDD[T]
-  protected def deserializeRDD[T: ClassTag](path: String): RDD[T]
+  protected def serializeRDD[T: ClassTag](rdd: RDD[T], path: Path): RDD[T]
+  protected def deserializeRDD[T: ClassTag](path: Path): RDD[T]
 
   protected def verifyRDDSerde[T: ClassTag](elems: Seq[T]): Unit =
     verifyFileSizesAndSerde(elems)
@@ -61,16 +62,14 @@ trait RDDSerialization extends SparkSuite {
       val fileSizeMap =
         fileSizes
           .zipWithIndex
-          .map(p => "part-%05d".format(p._2) -> p._1)
+          .map(p => "part-%05d".format(p._2) → p._1)
           .toMap
 
-      val filter: FilenameFilter = new PrefixFileFilter("part-")
-
-      new File(path)
-        .listFiles(filter)
+      path
+        .list("part-*")
         .map(
-          f =>
-            FilenameUtils.getBaseName(f.getAbsolutePath) -> f.length
+          p ⇒
+            p.basename → p.size
         )
         .toMap should be(fileSizeMap)
     }
