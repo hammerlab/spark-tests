@@ -9,9 +9,9 @@ import org.apache.spark.SparkEnv
  * Mix-in that exposes a Spark [[org.apache.spark.serializer.Serializer]] instance.
  */
 trait SparkSerialization {
-  self: SharedSparkContext =>
+  self: SharedSparkContext ⇒
 
-  private def serializer = SparkEnv.get.serializer.newInstance()
+  private lazy val serializer = SparkEnv.get.serializer.newInstance()
 
   def serialize(item: Any): ByteBuffer = serializer.serialize(item)
   def deserialize[T](bytes: ByteBuffer): T = serializer.deserialize(bytes)
