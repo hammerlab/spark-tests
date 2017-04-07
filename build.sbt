@@ -1,6 +1,6 @@
 name := "spark-tests"
 
-version := "1.3.4"
+version := "1.3.5"
 
 libraryDependencies ++= Seq(
   libs.value('paths),
