@@ -16,6 +16,7 @@ trait SparkSuite
 
   // Expose the SparkContext as an implicit.
   implicit lazy val sparkContext = sc
+  implicit lazy val hadoopConf = sc.hadoopConfiguration
 
   initConf()
 
