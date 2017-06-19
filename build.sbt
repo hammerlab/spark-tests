@@ -1,12 +1,11 @@
 name := "spark-tests"
 
-version := "1.3.6"
+version := "2.0.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   libs.value('paths),
   scalatest.value,
   spark.value,
-  sparkTestingBase.value,
   libs.value('spark_util),
   testUtils.value
 )
