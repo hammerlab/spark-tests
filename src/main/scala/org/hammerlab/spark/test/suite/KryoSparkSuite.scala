@@ -81,16 +81,17 @@ class KryoSparkSuite[T <: KryoRegistrator](registrar: Class[T] = null,
   override def registerClasses(kryo: Kryo): Unit = {
     Option(registrar).foreach(_.newInstance().registerClasses(kryo))
     for {
-      registration <- extraKryoRegistrations.reverseIterator
+      registration ← extraKryoRegistrations.reverseIterator
     } {
       registration.register(kryo)
     }
   }
 
-  conf
-    // Register this class as its own KryoRegistrator!
-    .set("spark.kryo.registrator", getClass.getCanonicalName)
-    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    .set("spark.kryo.referenceTracking", referenceTracking.toString)
-    .set("spark.kryo.registrationRequired", registrationRequired.toString)
+  sparkConf(
+    // Register this class as its own KryoRegistrator
+    "spark.kryo.registrator" → getClass.getCanonicalName,
+    "spark.serializer" → "org.apache.spark.serializer.KryoSerializer",
+    "spark.kryo.referenceTracking" → referenceTracking.toString,
+    "spark.kryo.registrationRequired" → registrationRequired.toString
+  )
 }

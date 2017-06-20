@@ -6,7 +6,8 @@ import org.apache.spark.SparkException
 
 import scala.collection.mutable
 
-class KryoSparkSuiteTest extends KryoSparkSuite {
+class KryoSparkSuiteTest
+  extends KryoSparkSuite {
 
   register(classOf[mutable.WrappedArray.ofRef[_]])
   register(classOf[Foo] → new FooSerializer)

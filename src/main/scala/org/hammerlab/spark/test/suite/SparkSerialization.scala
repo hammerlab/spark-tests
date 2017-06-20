@@ -2,14 +2,13 @@ package org.hammerlab.spark.test.suite
 
 import java.nio.ByteBuffer
 
-import com.holdenkarau.spark.testing.SharedSparkContext
 import org.apache.spark.SparkEnv
 
 /**
  * Mix-in that exposes a Spark [[org.apache.spark.serializer.Serializer]] instance.
  */
 trait SparkSerialization {
-  self: SharedSparkContext ⇒
+  self: SparkSuite ⇒
 
   private lazy val serializer = SparkEnv.get.serializer.newInstance()
 

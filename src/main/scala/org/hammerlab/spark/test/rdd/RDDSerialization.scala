@@ -1,8 +1,5 @@
 package org.hammerlab.spark.test.rdd
 
-import java.io.FilenameFilter
-
-import org.apache.commons.io.filefilter.PrefixFileFilter
 import org.apache.spark.rdd.RDD
 import org.hammerlab.paths.Path
 import org.hammerlab.spark.test.suite.SparkSuite

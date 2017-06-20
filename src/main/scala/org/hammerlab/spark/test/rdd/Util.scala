@@ -14,10 +14,10 @@ object Util {
     sc
       .parallelize(
         for {
-          (elems, partition) <- partitions.zipWithIndex
-          (elem, idx) <- elems.zipWithIndex
+          (elems, partition) ← partitions.zipWithIndex
+          (elem, idx) ← elems.zipWithIndex
         } yield {
-          (partition, idx) -> elem
+          (partition, idx) → elem
         }
       )
       .repartitionAndSortWithinPartitions(KeyPartitioner(partitions.size))

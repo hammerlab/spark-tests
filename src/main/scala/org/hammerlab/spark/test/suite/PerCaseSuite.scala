@@ -1,6 +1,8 @@
 package org.hammerlab.spark.test.suite
 
-import org.apache.spark.{ SparkConf, SparkContext }
+import java.util.Date
+
+import org.apache.spark.SparkContext
 import org.hammerlab.test.Suite
 
 /**
@@ -10,32 +12,23 @@ trait PerCaseSuite
   extends Suite
     with SparkSuiteBase {
 
-  implicit var sc: SparkContext = _
+  protected implicit var sc: SparkContext = _
 
-  var conf: SparkConf = _
+  val uuid = s"${new Date()}-${math.floor(math.random * 1E5).toInt}"
 
-  override val appID = s"${this.getClass.getSimpleName}-$uuid"
-
-  protected def setConfigs(conf: SparkConf): Unit = {}
+  val appID = s"${this.getClass.getSimpleName}-$uuid"
 
   before {
-    conf = new SparkConf()
-
-    initConf()
-
-    // Opportunity for subclasses to set/override configs.
-    setConfigs(conf)
-
-    sc = new SparkContext(conf)
+    sc = makeSparkContext
   }
 
   after {
     sc.stop()
+    clearContext()
 
     // To avoid Akka rebinding to the same port, since it doesn't unbind immediately on shutdown
     System.clearProperty("spark.driver.port")
 
     sc = null
-    conf = null
   }
 }
