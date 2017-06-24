@@ -62,9 +62,9 @@ trait SparkSuiteBase
     // Set this explicitly so that we get deterministic behavior across test-machines with varying numbers of cores.
     "spark.master" → s"local[$numCores]",
     "spark.app.name" → this.getClass.getName,
-    "spark.driver.host" → "localhost"
+    "spark.driver.host" → "localhost",
+    "spark.ui.enabled" → "false"
   )
-
 }
 
 case object SparkContextAlreadyInitialized extends IllegalStateException
