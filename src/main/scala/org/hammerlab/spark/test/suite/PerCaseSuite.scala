@@ -12,23 +12,18 @@ trait PerCaseSuite
   extends Suite
     with SparkSuiteBase {
 
-  protected implicit var sc: SparkContext = _
-
   val uuid = s"${new Date()}-${math.floor(math.random * 1E5).toInt}"
 
   val appID = s"${this.getClass.getSimpleName}-$uuid"
 
   before {
-    sc = makeSparkContext
+    makeSparkContext
   }
 
   after {
-    sc.stop()
-    clearContext()
+    clear()
 
     // To avoid Akka rebinding to the same port, since it doesn't unbind immediately on shutdown
     System.clearProperty("spark.driver.port")
-
-    sc = null
   }
 }

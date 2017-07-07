@@ -1,6 +1,7 @@
 package org.hammerlab.spark.test.suite
 
 import org.apache.spark.{ SparkConf, SparkContext }
+import org.hammerlab.spark.Context
 import org.hammerlab.test.Suite
 
 /**
@@ -11,34 +12,35 @@ trait SparkSuiteBase
   extends Suite
     with SparkConfBase {
 
-  private var _sc: SparkContext = _
+  protected implicit var sc: SparkContext = _
+  protected implicit var ctx: Context = _
 
   def makeSparkContext: SparkContext =
-    Option(_sc) match {
-      case Some(sc) ⇒
+    Option(sc) match {
+      case Some(_) ⇒
         throw SparkContextAlreadyInitialized
       case None ⇒
         val sparkConf = makeSparkConf
 
-        _sc = new SparkContext(sparkConf)
+        sc = new SparkContext(sparkConf)
         val checkpointsDir = tmpDir()
-        _sc.setCheckpointDir(checkpointsDir.toString)
+        sc.setCheckpointDir(checkpointsDir.toString)
 
-        _sc
+        ctx = sc
+        sc
     }
 
-  def clearContext(): Unit = {
-    Option(_sc) match {
-      case Some(sc) ⇒
-        _sc = null
-      case None ⇒
-        throw NoSparkContextToClear
-    }
-  }
+  def clear(): Unit =
+    if (sc != null) {
+      sc.stop()
+      sc = null
+      ctx = null
+    } else
+      throw NoSparkContextToClear
 
   override def sparkConf(confs: (String, String)*): Unit =
-    Option(_sc) match {
-      case Some(sc) ⇒
+    Option(sc) match {
+      case Some(_) ⇒
         throw SparkConfigAfterInitialization(confs)
       case None ⇒
         super.sparkConf(confs: _*)

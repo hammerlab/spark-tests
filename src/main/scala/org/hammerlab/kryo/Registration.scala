@@ -1,6 +1,7 @@
 package org.hammerlab.kryo
 
 import com.esotericsoftware.kryo.{ Kryo, Serializer }
+import org.apache.spark.serializer.KryoRegistrator
 
 /**
  * Base for (usually implicitly-created) kryo-registrations that subclasses can add.
@@ -37,6 +38,13 @@ object Registration {
    */
   implicit class RegistrarToRegister(registrar: Registrar) extends Registration {
     override def register(implicit kryo: Kryo): Unit = registrar(kryo)
+  }
+
+  /**
+   * Compose all of a provided [[KryoRegistrator]]'s [[Registration]]'s with this [[Registrar]].
+   */
+  implicit class RegistratorToRegister(registrator: KryoRegistrator) extends Registration {
+    override def register(implicit kryo: Kryo): Unit = registrator.registerClasses(kryo)
   }
 
   /**
