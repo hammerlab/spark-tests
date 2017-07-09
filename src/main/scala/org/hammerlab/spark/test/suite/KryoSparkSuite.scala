@@ -8,9 +8,7 @@ import org.hammerlab.kryo.spark.Registrator
  * test-suite-scoped manner.
  */
 class KryoSparkSuite(registrationRequired: Boolean = true,
-                     referenceTracking: Boolean = false)(
-    implicit registrar: Registrar = null
-  )
+                     referenceTracking: Boolean = false)
   extends SparkSuite
     with Registrator {
 
@@ -21,10 +19,4 @@ class KryoSparkSuite(registrationRequired: Boolean = true,
     "spark.kryo.referenceTracking" → referenceTracking.toString,
     "spark.kryo.registrationRequired" → registrationRequired.toString
   )
-
-  /**
-   * In addition to any test-suite-specific registrations subclasses add with the [[register]] method, add
-   * [[registrar]]'s registrations by default.
-   */
-  Option(registrar).foreach(register(_))
 }
