@@ -1,7 +1,7 @@
 package org.hammerlab.spark.test.suite
 
 import org.apache.spark.{ SparkConf, SparkContext }
-import org.hammerlab.spark.Context
+import org.hammerlab.spark.{ Context, SparkConfBase }
 import org.hammerlab.test.Suite
 
 /**
@@ -10,7 +10,8 @@ import org.hammerlab.test.Suite
  */
 trait SparkSuiteBase
   extends Suite
-    with SparkConfBase {
+    with SparkConfBase
+    with TestConfs {
 
   protected implicit var sc: SparkContext = _
   protected implicit var ctx: Context = _

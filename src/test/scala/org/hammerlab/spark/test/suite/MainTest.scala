@@ -24,9 +24,9 @@ class MainTest
     outPath.read should linesMatch(
       "spark.app.id local-" ++ Digits,
       "spark.app.name org.hammerlab.spark.test.suite.MainTest",
-      "spark.driver.allowMultipleContexts true",
       "spark.driver.host localhost",
       "spark.driver.port " ++ Digits,
+      "spark.eventLog.enabled false",
       "spark.executor.id driver",
       "spark.kryo.referenceTracking false",
       "spark.kryo.registrationRequired true",
@@ -53,5 +53,6 @@ object Main {
               s"$k $v"
           }
       )
+    sc.stop()
   }
 }
