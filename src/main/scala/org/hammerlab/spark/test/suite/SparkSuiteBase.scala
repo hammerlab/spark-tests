@@ -5,8 +5,7 @@ import org.hammerlab.spark.{ Context, SparkConfBase }
 import org.hammerlab.test.Suite
 
 /**
- * Base for tests that initialize [[SparkConf]]s (and [[org.apache.spark.SparkContext]]s, though that is left to
- * subclasses).
+ * Base for tests that initialize [[SparkConf]]s (and [[SparkContext]]s, though that is left to subclasses).
  */
 trait SparkSuiteBase
   extends Suite
