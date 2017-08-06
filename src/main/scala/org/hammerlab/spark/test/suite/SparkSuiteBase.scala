@@ -1,70 +1,50 @@
 package org.hammerlab.spark.test.suite
 
 import org.apache.spark.{ SparkConf, SparkContext }
+import org.hammerlab.spark.{ Context, SparkConfBase }
 import org.hammerlab.test.Suite
 
-import scala.collection.mutable
-
 /**
- * Base for tests that initialize [[SparkConf]]s (and [[org.apache.spark.SparkContext]]s, though that is left to
- * subclasses).
+ * Base for tests that initialize [[SparkConf]]s (and [[SparkContext]]s, though that is left to subclasses).
  */
 trait SparkSuiteBase
-  extends Suite {
+  extends Suite
+    with SparkConfBase
+    with TestConfs {
 
-  private var _sc: SparkContext = _
+  protected implicit var sc: SparkContext = _
+  protected implicit var ctx: Context = _
 
   def makeSparkContext: SparkContext =
-    Option(_sc) match {
-      case Some(sc) ⇒
+    Option(sc) match {
+      case Some(_) ⇒
         throw SparkContextAlreadyInitialized
       case None ⇒
-        val sparkConf = new SparkConf()
-        for {
-          (k, v) ← sparkConfs
-        } {
-          sparkConf.set(k, v)
-        }
+        val sparkConf = makeSparkConf
 
-        _sc = new SparkContext(sparkConf)
+        sc = new SparkContext(sparkConf)
         val checkpointsDir = tmpDir()
-        _sc.setCheckpointDir(checkpointsDir.toString)
+        sc.setCheckpointDir(checkpointsDir.toString)
 
-        _sc
+        ctx = sc
+        sc
     }
 
-  def clearContext(): Unit = {
-    Option(_sc) match {
-      case Some(sc) ⇒
-        _sc = null
-      case None ⇒
-        throw NoSparkContextToClear
-    }
-  }
+  def clear(): Unit =
+    if (sc != null) {
+      sc.stop()
+      sc = null
+      ctx = null
+    } else
+      throw NoSparkContextToClear
 
-  private val sparkConfs = mutable.Map[String, String]()
-
-  def sparkConf(confs: (String, String)*): Unit =
-    Option(_sc) match {
-      case Some(sc) ⇒
+  override def sparkConf(confs: (String, String)*): Unit =
+    Option(sc) match {
+      case Some(_) ⇒
         throw SparkConfigAfterInitialization(confs)
       case None ⇒
-        for {
-          (k, v) ← confs
-        } {
-          sparkConfs(k) = v
-        }
+        super.sparkConf(confs: _*)
     }
-
-  def numCores: Int = 4
-
-  sparkConf(
-    // Set this explicitly so that we get deterministic behavior across test-machines with varying numbers of cores.
-    "spark.master" → s"local[$numCores]",
-    "spark.app.name" → this.getClass.getName,
-    "spark.driver.host" → "localhost",
-    "spark.ui.enabled" → "false"
-  )
 }
 
 case object SparkContextAlreadyInitialized extends IllegalStateException

@@ -2,7 +2,7 @@ package org.hammerlab.spark.test.suite
 
 import com.esotericsoftware.kryo.io.{ Input, Output }
 import com.esotericsoftware.kryo.{ Kryo, Serializer }
-import org.apache.spark.SparkException
+import org.apache.spark.{ SparkEnv, SparkException }
 
 import scala.collection.mutable
 
@@ -14,9 +14,11 @@ class KryoSparkSuiteTest
   register(classOf[Array[Foo]])
 
   test("custom serializer is used") {
+    val ser = SparkEnv.get.serializer.newInstance()
     intercept[SparkException] {
       sc.parallelize(Seq(Foo(1, "a"), Foo(2, "b"))).count()
-    }.getMessage should include("FooException")
+    }
+    .getMessage should include("FooException")
   }
 }
 

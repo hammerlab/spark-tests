@@ -1,14 +1,16 @@
 name := "spark-tests"
 
-version := "2.0.1"
+version := "2.1.0"
 
-libraryDependencies ++= Seq(
-  libs.value('paths),
-  scalatest.value,
-  spark.value,
-  libs.value('spark_util),
-  testUtils.value
+deps ++= Seq(
+  paths % "1.2.0",
+  scalatest,
+  spark,
+  spark_util % "1.2.1",
+  testUtils
 )
 
+testUtilsVersion := "1.3.0"
+
 // Don't include default parent-plugin test-deps
-testDeps := Seq()
+testDeps := Nil

@@ -1,7 +1,5 @@
 package org.hammerlab.spark.test.suite
 
-import org.apache.hadoop.conf.Configuration
-import org.apache.spark.SparkContext
 import org.hammerlab.test.Suite
 
 /**
@@ -11,20 +9,13 @@ trait SparkSuite
   extends Suite
     with SparkSuiteBase {
 
-  protected implicit var sc: SparkContext = _
-  protected implicit var hadoopConf: Configuration = _
-
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    sc = makeSparkContext
-    hadoopConf = sc.hadoopConfiguration
+    makeSparkContext
   }
 
   override def afterAll(): Unit = {
     super.afterAll()
-    sc.stop()
-    clearContext()
-    sc = null
-    hadoopConf = null
+    clear()
   }
 }
