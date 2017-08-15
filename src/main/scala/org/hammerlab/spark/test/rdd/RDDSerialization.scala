@@ -1,8 +1,9 @@
 package org.hammerlab.spark.test.rdd
 
-import org.apache.spark.rdd.RDD
+import org.apache.spark.rdd.{ GetFileSplit, RDD }
 import org.hammerlab.paths.Path
 import org.hammerlab.spark.test.suite.SparkSuite
+import org.hammerlab.hadoop.splits.PartFileBasename
 
 import scala.reflect.ClassTag
 
@@ -43,11 +44,7 @@ trait RDDSerialization
       else
         origFileSizes
 
-    val numPartitions =
-      if (fileSizes.isEmpty)
-        4
-      else
-        fileSizes.size
+    val numPartitions = fileSizes.size
 
     val path = tmpPath()
 
@@ -55,22 +52,38 @@ trait RDDSerialization
 
     serializeRDD[T](rdd, path)
 
-    if (fileSizes.nonEmpty) {
-      val fileSizeMap =
-        fileSizes
-          .zipWithIndex
-          .map(p => "part-%05d".format(p._2) → p._1)
-          .toMap
+    val fileSizeMap =
+      fileSizes
+        .zipWithIndex
+        .map {
+          case (size, idx) ⇒
+            PartFileBasename(idx) →
+              size
+        }
+        .toMap
 
-      path
-        .list("part-*")
+    path
+      .list("part-*")
+      .map(
+        p ⇒
+          p.basename → p.size
+      )
+      .toMap should be(fileSizeMap)
+
+    val after = deserializeRDD[T](path)
+
+    after.getNumPartitions should be(numPartitions)
+    after
+      .partitions
+      .map(
+        GetFileSplit(_).path
+      ) should be(
+      (0 until numPartitions)
         .map(
-          p ⇒
-            p.basename → p.size
+          i ⇒
+            path / PartFileBasename(i)
         )
-        .toMap should be(fileSizeMap)
-    }
-
-    deserializeRDD[T](path).collect() should be(elems.toArray)
+    )
+    after.collect() should be(elems.toArray)
   }
 }
