@@ -1,7 +1,7 @@
 package org.hammerlab.spark.test.serde
 
 import org.hammerlab.test.version.Util
-import org.hammerlab.spark.test.serde.JavaSerialization._
+import org.hammerlab.test.serde.JavaSerialization._
 import org.hammerlab.spark.test.serde.util.{Foo, FooRegistrarTest, HasKryoSuite}
 
 class SerializationSizeTest
