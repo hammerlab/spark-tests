@@ -6,7 +6,7 @@ deps ++= Seq(
   paths % "1.2.0",
   scalatest,
   spark,
-  spark_util % "1.2.1",
+  spark_util % "1.3.0",
   testUtils
 )
 

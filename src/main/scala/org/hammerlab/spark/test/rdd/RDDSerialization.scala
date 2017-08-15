@@ -1,8 +1,9 @@
 package org.hammerlab.spark.test.rdd
 
-import org.apache.spark.rdd.RDD
+import org.apache.spark.rdd.{ GetFileSplit, RDD }
 import org.hammerlab.paths.Path
 import org.hammerlab.spark.test.suite.SparkSuite
+import org.hammerlab.hadoop.splits.PartFileBasename
 
 import scala.reflect.ClassTag
 
@@ -56,7 +57,7 @@ trait RDDSerialization
         .zipWithIndex
         .map {
           case (size, idx) ⇒
-            "part-%05d".format(idx) →
+            PartFileBasename(idx) →
               size
         }
         .toMap
@@ -72,6 +73,17 @@ trait RDDSerialization
     val after = deserializeRDD[T](path)
 
     after.getNumPartitions should be(numPartitions)
+    after
+      .partitions
+      .map(
+        GetFileSplit(_).path
+      ) should be(
+      (0 until numPartitions)
+        .map(
+          i ⇒
+            path / PartFileBasename(i)
+        )
+    )
     after.collect() should be(elems.toArray)
   }
 }
