@@ -1,6 +1,6 @@
 name := "spark-tests"
 
-version := "2.2.0-SNAPSHOT"
+version := "2.2.0"
 
 deps ++= Seq(
   paths % "1.2.0",
