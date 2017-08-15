@@ -43,11 +43,7 @@ trait RDDSerialization
       else
         origFileSizes
 
-    val numPartitions =
-      if (fileSizes.isEmpty)
-        4
-      else
-        fileSizes.size
+    val numPartitions = fileSizes.size
 
     val path = tmpPath()
 
@@ -55,22 +51,27 @@ trait RDDSerialization
 
     serializeRDD[T](rdd, path)
 
-    if (fileSizes.nonEmpty) {
-      val fileSizeMap =
-        fileSizes
-          .zipWithIndex
-          .map(p => "part-%05d".format(p._2) → p._1)
-          .toMap
+    val fileSizeMap =
+      fileSizes
+        .zipWithIndex
+        .map {
+          case (size, idx) ⇒
+            "part-%05d".format(idx) →
+              size
+        }
+        .toMap
 
-      path
-        .list("part-*")
-        .map(
-          p ⇒
-            p.basename → p.size
-        )
-        .toMap should be(fileSizeMap)
-    }
+    path
+      .list("part-*")
+      .map(
+        p ⇒
+          p.basename → p.size
+      )
+      .toMap should be(fileSizeMap)
 
-    deserializeRDD[T](path).collect() should be(elems.toArray)
+    val after = deserializeRDD[T](path)
+
+    after.getNumPartitions should be(numPartitions)
+    after.collect() should be(elems.toArray)
   }
 }
