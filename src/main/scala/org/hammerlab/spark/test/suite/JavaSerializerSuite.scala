@@ -8,6 +8,6 @@ import org.apache.spark.serializer.JavaSerializer
 trait JavaSerializerSuite
   extends SparkSuite {
   sparkConf(
-    "spark.serializer" → classOf[JavaSerializer].getCanonicalName
+    "spark.serializer" → classOf[JavaSerializer].getName
   )
 }

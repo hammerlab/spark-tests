@@ -6,11 +6,13 @@ import org.apache.hadoop.mapred.SequenceFileOutputFormat
 import org.apache.spark.rdd.RDD
 import org.hammerlab.hadoop.splits.UnsplittableSequenceFileInputFormat
 import org.hammerlab.paths.Path
+import org.hammerlab.spark.test.suite.JavaSerializerSuite
 
 import scala.reflect.ClassTag
 
 class RDDSerializationTest
-  extends RDDSerialization {
+  extends RDDSerialization
+    with JavaSerializerSuite {
   override protected def serializeRDD[T: ClassTag](rdd: RDD[T],
                                                    path: Path): RDD[T] = {
     rdd
