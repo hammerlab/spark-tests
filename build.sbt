@@ -1,12 +1,12 @@
 name := "spark-tests"
 
-version := "2.2.0"
+version := "2.3.0"
 
 deps ++= Seq(
-  paths % "1.2.0",
+  paths % "1.3.1",
   scalatest,
   spark,
-  spark_util % "1.3.0",
+  spark_util % "2.0.0",
   testUtils
 )
 

@@ -5,7 +5,7 @@ import org.hammerlab.test.Suite
 /**
  * Base for test suites that shar one [[org.apache.spark.SparkContext]] across all test cases.
  */
-trait SparkSuite
+abstract class SparkSuite
   extends Suite
     with SparkSuiteBase {
 

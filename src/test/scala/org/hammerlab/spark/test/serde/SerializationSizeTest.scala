@@ -39,6 +39,29 @@ class SerializationSizeTest
     checkKryoRoundTrip(Foo(187, "d" * 8), 12)
   }
 
+  import KryoSerialization._
+
+  test("kryo file stream APIs") {
+    val foo = Foo(187, "d" * 8)
+    val file = tmpPath()
+    kryoWrite(foo, file.outputStream, includeClass = false)
+    file.size should be(12)
+    kryoRead[Foo](file.inputStream) should be(foo)
+  }
+
+  test("kryo file path APIs") {
+    val foo = Foo(187, "d" * 8)
+    val file = tmpPath()
+    kryoWrite(foo, file)
+    file.size should be(12)
+    kryoRead[Foo](file) should be(foo)
+  }
+
+  test("classless kryo bytes") {
+    val foo = Foo(187, "d" * 8)
+    kryoRead[Foo](kryoBytes(foo)) should be(foo)
+  }
+
   test("kryo foo class") {
     checkKryoRoundTrip(Foo(127, "d" *  8), 13, includeClass = true)
     checkKryoRoundTrip(Foo(128, "d" *  8), 13, includeClass = true)
