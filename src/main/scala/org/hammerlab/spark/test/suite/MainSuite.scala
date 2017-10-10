@@ -2,7 +2,6 @@ package org.hammerlab.spark.test.suite
 
 import java.lang.System.{ clearProperty, getProperty, setProperty }
 
-import org.apache.spark.serializer.KryoRegistrator
 import org.hammerlab.spark.{ SparkConfBase, confs }
 import org.hammerlab.test.Suite
 
@@ -14,7 +13,7 @@ import scala.collection.mutable
  *
  * Sets Spark configuration settings, including Kryo-serde with required registration, through system properties.
  */
-class MainSuite(override val registrar: Class[_ <: KryoRegistrator] = null)
+class MainSuite
   extends Suite
     with SparkConfBase
     with TestConfs

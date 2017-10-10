@@ -3,6 +3,7 @@ package org.hammerlab.spark.test.suite
 import com.esotericsoftware.kryo.io.{ Input, Output }
 import com.esotericsoftware.kryo.{ Kryo, Serializer }
 import org.apache.spark.SparkException
+import org.hammerlab.kryo._
 
 import scala.collection.mutable
 
@@ -11,10 +12,9 @@ class KryoSparkSuiteTest
     with SparkSerialization {
 
   register(
-    classOf[mutable.WrappedArray.ofRef[_]],
-    classOf[Foo] → new FooSerializer,
-    classOf[Array[Foo]],
-    classOf[Bar]
+    cls[mutable.WrappedArray.ofRef[_]],
+    arr[Foo],
+    cls[Bar]
   )
 
   test("spark job custom serializer") {
@@ -35,11 +35,14 @@ class KryoSparkSuiteTest
 
 case class Foo(n: Int, s: String)
 
-case class FooException() extends Exception
-
-class FooSerializer extends Serializer[Foo] {
-  override def write(kryo: Kryo, output: Output, `object`: Foo): Unit = throw FooException()
-  override def read(kryo: Kryo, input: Input, `type`: Class[Foo]): Foo = ???
+object Foo {
+  implicit val serializer: Serializer[Foo] =
+    new Serializer[Foo] {
+      override def write(kryo: Kryo, out: Output, foo: Foo): Unit = throw FooException()
+      override def read(kryo: Kryo, in: Input, cls: Class[Foo]): Foo = ???
+    }
 }
+
+case class FooException() extends Exception
 
 case class Bar(n: Int, s: String)

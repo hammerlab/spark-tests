@@ -1,8 +1,6 @@
 package org.hammerlab.spark.test.suite
 
-import org.apache.spark.serializer.KryoRegistrator
-import org.hammerlab.kryo.spark.Registrator
-import org.hammerlab.spark.confs
+import org.hammerlab.spark.SelfRegistrar
 
 /**
  * Base for test-suites that rely on Kryo serialization, including registering classes for serialization in a
@@ -11,7 +9,4 @@ import org.hammerlab.spark.confs
 class KryoSparkSuite(override val registrationRequired: Boolean = true,
                      override val referenceTracking: Boolean = false)
   extends SparkSuite
-    with Registrator
-    with confs.Kryo {
-  override def registrar: Class[_ <: KryoRegistrator] = getClass
-}
+    with SelfRegistrar
