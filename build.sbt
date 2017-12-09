@@ -1,8 +1,7 @@
 name := "spark-tests"
+r"2.3.0"
 
-version := "2.3.0"
-
-deps ++= Seq(
+dep(
   paths % "1.3.1",
   scalatest,
   spark,
