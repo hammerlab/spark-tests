@@ -4,7 +4,7 @@ jdk:
   - oraclejdk8
 
 scala:
-  - 2.11.8
+  - 2.11.12
 
 script: sbt ++$TRAVIS_SCALA_VERSION clean coverageTest
 
@@ -14,7 +14,7 @@ cache:
   - $HOME/.sbt/boot/
   - $HOME/.zinc
 
-after_success: sbt ++$TRAVIS_SCALA_VERSION travis-report
+after_success: bash <(curl -s https://codecov.io/bash)
 
 before_cache:
   # Tricks to avoid unnecessary cache updates

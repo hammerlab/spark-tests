@@ -1,14 +1,14 @@
 name := "spark-tests"
+v"2.3.1"
 
-version := "2.3.0"
-
-deps ++= Seq(
-  paths % "1.3.1",
+dep(
+  paths % "1.5.0",
   scalatest,
   spark,
-  spark_util % "2.0.0",
+  spark_util % "2.0.3",
   testUtils
 )
 
 // Don't include default parent-plugin test-deps
-testDeps := Nil
+clearTestDeps
+scala211Only
