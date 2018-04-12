@@ -5,7 +5,7 @@ dep(
   paths % "1.5.0",
   scalatest,
   spark,
-  spark_util % "2.0.3",
+  spark_util % "2.0.4",
   testUtils
 )
 

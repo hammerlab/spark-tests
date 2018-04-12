@@ -1,6 +1,6 @@
 package org.hammerlab.spark.test.suite
 
-import org.hammerlab.test.Suite
+import hammerlab.test.Suite
 
 /**
  * Base for test suites that shar one [[org.apache.spark.SparkContext]] across all test cases.

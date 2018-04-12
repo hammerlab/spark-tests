@@ -1,8 +1,8 @@
 package org.hammerlab.spark.test.suite
 
+import hammerlab.test.Suite
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.hammerlab.spark.{ Context, SparkConfBase }
-import org.hammerlab.test.Suite
 
 /**
  * Base for tests that initialize [[SparkConf]]s (and [[SparkContext]]s, though that is left to subclasses).
