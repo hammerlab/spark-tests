@@ -2,8 +2,8 @@ package org.hammerlab.spark.test.suite
 
 import java.util.Date
 
+import hammerlab.test.Suite
 import org.apache.spark.SparkContext
-import org.hammerlab.test.Suite
 
 /**
  * Base for test-suites that expose a fresh [[SparkContext]] for each test-case.

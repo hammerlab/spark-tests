@@ -2,8 +2,8 @@ package org.hammerlab.spark.test.suite
 
 import java.lang.System.{ clearProperty, getProperty, setProperty }
 
+import hammerlab.test.Suite
 import org.hammerlab.spark.{ SparkConfBase, confs }
-import org.hammerlab.test.Suite
 
 import scala.collection.mutable
 
