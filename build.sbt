@@ -1,11 +1,11 @@
 name := "spark-tests"
-v"2.3.2"
+v"2.3.3"
 
 dep(
   paths % "1.5.0",
   scalatest,
   spark,
-  spark_util % "2.0.4",
+  spark_util % "3.0.0",
   hammerlab.test.base
 )
 

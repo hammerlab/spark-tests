@@ -1,7 +1,5 @@
 package org.hammerlab.spark.test.suite
 
-import com.esotericsoftware.kryo.io.{ Input, Output }
-import com.esotericsoftware.kryo.{ Kryo, Serializer }
 import org.apache.spark.SparkException
 import org.hammerlab.kryo._
 
@@ -37,10 +35,10 @@ case class Foo(n: Int, s: String)
 
 object Foo {
   implicit val serializer: Serializer[Foo] =
-    new Serializer[Foo] {
-      override def write(kryo: Kryo, out: Output, foo: Foo): Unit = throw FooException()
-      override def read(kryo: Kryo, in: Input, cls: Class[Foo]): Foo = ???
-    }
+    Serializer(
+      (_, _) ⇒ ???,
+      (_, _, _) ⇒ throw FooException()
+    )
 }
 
 case class FooException() extends Exception
