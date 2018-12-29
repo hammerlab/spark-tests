@@ -1,7 +1,8 @@
 package org.hammerlab.spark.test.suite
 
+import grizzled.slf4j.Logging
 import hammerlab.test.Suite
-import org.apache.spark.{ SparkConf, SparkContext }
+import org.apache.spark.{ SparkConf, SparkContext, SparkException }
 import org.hammerlab.spark.{ Context, SparkConfBase }
 
 /**
@@ -10,7 +11,9 @@ import org.hammerlab.spark.{ Context, SparkConfBase }
 trait SparkSuiteBase
   extends Suite
     with SparkConfBase
-    with TestConfs {
+    with TestConfs
+    with Logging
+{
 
   protected implicit var sc: SparkContext = _
   protected implicit var ctx: Context = _
@@ -22,7 +25,17 @@ trait SparkSuiteBase
       case None ⇒
         val sparkConf = makeSparkConf
 
-        sc = new SparkContext(sparkConf)
+        sc =
+          try {
+            new SparkContext(sparkConf)
+          } catch {
+            case e: SparkException if e.getMessage.contains("Only one SparkContext may be running in this JVM") ⇒
+              val sc = SparkContext.getOrCreate()
+              warn("Previous SparkContext still active! Shutting down; here is the caught error:")
+              warn(e)
+              sc.stop()
+              new SparkContext(sparkConf)
+          }
         val checkpointsDir = tmpDir()
         sc.setCheckpointDir(checkpointsDir.toString)
 
